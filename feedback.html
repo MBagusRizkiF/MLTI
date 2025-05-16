@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Form Saran dan Keluhan Anonim - UIN Jakarta</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+    * { box-sizing: border-box; }
+    body {
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
+      background: linear-gradient(135deg, #4e54c8, #8f94fb);
+      color: #333;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 2rem;
+    }
+    .container {
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.12);
+      width: 100%;
+      max-width: 600px;
+      padding: 2rem 3rem;
+      margin-bottom: 3rem;
+    }
+    h1 {
+      text-align: center;
+      color: #4e54c8;
+      margin-bottom: 1.5rem;
+      font-weight: 600;
+    }
+    label {
+      display: block;
+      font-weight: 600;
+      margin-top: 1.25rem;
+      margin-bottom: 0.5rem;
+      color: #555;
+    }
+    select, textarea {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border: 1.8px solid #ddd;
+      border-radius: 8px;
+      font-size: 1rem;
+      transition: border-color 0.3s ease;
+      resize: vertical;
+      min-height: 100px;
+      font-family: 'Poppins', sans-serif;
+    }
+    select:focus, textarea:focus {
+      border-color: #4e54c8;
+      outline: none;
+      box-shadow: 0 0 5px rgba(78, 84, 200, 0.5);
+    }
+    button {
+      background: #4e54c8;
+      color: #fff;
+      font-weight: 600;
+      font-size: 1.1rem;
+      padding: 0.75rem 2rem;
+      border: none;
+      border-radius: 8px;
+      margin-top: 2rem;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      display: block;
+      width: 100%;
+    }
+    button:hover {
+      background: #3a3fc1;
+    }
+    .info-text {
+      font-size: 0.9rem;
+      color: #666;
+      margin-top: -1rem;
+      margin-bottom: 1rem;
+      text-align: center;
+    }
+    .success-message {
+      background-color: #d4edda;
+      color: #155724;
+      border: 1.6px solid #c3e6cb;
+      padding: 1rem 1.5rem;
+      border-radius: 8px;
+      margin-top: 1rem;
+      text-align: center;
+      font-weight: 600;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <main class="container">
+    <h1>Saran &amp; Keluhan Anonim UIN Jakarta</h1>
+    <p class="info-text">Silakan kirim kritik, saran, atau keluhan terkait akademik maupun non-akademik secara anonim.</p>
+    <form id="feedback-form">
+      <label for="category">Kategori:</label>
+      <select id="category" name="category" required>
+        <option value="" disabled selected>Pilih kategori</option>
+        <option value="Akademik">Akademik</option>
+        <option value="Non-Akademik">Non Akademik</option>
+      </select>
+
+      <label for="message">Keluhan / Kritik / Saran:</label>
+      <textarea id="message" name="message" placeholder="Tuliskan keluhan atau saran Anda di sini..." required></textarea>
+
+      <button type="submit">Kirim</button>
+    </form>
+    <div id="success-message" class="success-message">Terima kasih, saran Anda telah dikirim secara anonim.</div>
+  </main>
+
+  <script>
+    const form = document.getElementById('feedback-form');
+    const successMessage = document.getElementById('success-message');
+
+    // Ganti URL di bawah dengan URL Web App dari Google Apps Script kamu
+    const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxhp2TUf4MCPpO6CfwyXvLV1j7XjlcmZV3w1b-bWJeruQfTxtVALGExEpTtwgoVWAxu/exec';
+
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      const kategori = form.category.value;
+      const pesan = form.message.value.trim();
+
+      if (!kategori || !pesan) {
+        alert('Mohon lengkapi semua isian.');
+        return;
+      }
+
+      fetch(GOOGLE_SCRIPT_URL, {
+        method: 'POST',
+        body: new URLSearchParams({ kategori, pesan })
+      })
+      .then(() => {
+        form.reset();
+        successMessage.style.display = 'block';
+      })
+      .catch(() => {
+        alert('Gagal mengirim data. Coba lagi nanti.');
+      });
+    });
+  </script>
+</body>
+</html>
+
+<!--
+  Catatan:
+  - Ganti 'PASTE_URL_WEB_APP_DI_SINI' dengan URL Web App dari Google Apps Script kamu.
+  - Pastikan Google Apps Script sudah diatur untuk menerima POST request dan mengirim data ke Google Sheets.
+  - Pastikan juga Google Apps Script sudah di-publish sebagai Web App dengan akses publik.
+  - Untuk mengatur Google Apps Script, buka Google Drive, buat file baru, pilih "Google Apps Script", dan salin kode yang sesuai.
+  - Setelah itu, klik "Deploy" > "New deployment", pilih "Web app", dan ikuti langkah-langkahnya.
+  - Pastikan untuk mengatur izin akses ke "Anyone" agar semua orang bisa mengirim saran.
+  - Setelah itu, salin URL yang diberikan dan ganti di bagian 'GOOGLE_SCRIPT_URL' di kode HTML.
+  - Jika ada pertanyaan lebih lanjut, silakan tanyakan.
+  - Semoga berhasil!
